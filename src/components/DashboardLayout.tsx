@@ -74,23 +74,22 @@ export default function DashboardLayout({ children, user, userRole = null }: Das
                 />
             )}
 
-            {/* Sidebar - Mobile: overlay (hidden by default), Desktop: static (always visible) */}
+            {/* Mobile Sidebar Overlay */}
             <div className={cn(
-                "fixed md:relative z-50 md:z-auto h-full",
-                "transition-transform duration-300 ease-in-out md:transition-none",
-                // Mobile: hidden by default, slide in when open
-                // Desktop: always visible
-                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+                "fixed md:hidden z-50 h-full",
+                "transition-transform duration-300 ease-in-out",
+                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <Sidebar
-                    isCollapsed={isCollapsed}
+                    isCollapsed={false}
                     toggleSidebar={toggleSidebar}
                     userRole={userRole}
                     onMobileClose={closeMobileMenu}
+                    isMobile={true}
                 />
             </div>
 
-            {/* Main Content */}
+            {/* Main Container */}
             <div className="flex flex-col flex-1 overflow-hidden bg-slate-50 relative">
                 {/* Tall Background with Primary Color (reacts to intensity slider) */}
                 <div className="absolute top-0 left-0 right-0 h-64 z-0" style={headerBackground} />
@@ -100,14 +99,18 @@ export default function DashboardLayout({ children, user, userRole = null }: Das
                         user={user}
                         onMobileMenuToggle={toggleMobileMenu}
                     />
-                    <main className="flex-1 overflow-hidden px-2 sm:px-4 pb-4 pt-0">
+                    <main className="flex-1 overflow-hidden px-4 pb-4 pt-0">
                         <div className="flex h-full gap-4">
-                            {/* Desktop Sidebar Spacer - hidden on mobile */}
-                            <div className={cn(
-                                "hidden md:block flex-shrink-0",
-                                isCollapsed ? "w-16" : "w-64"
-                            )} />
+                            {/* Desktop Sidebar - inside main content */}
+                            <div className="hidden md:block">
+                                <Sidebar
+                                    isCollapsed={isCollapsed}
+                                    toggleSidebar={toggleSidebar}
+                                    userRole={userRole}
+                                />
+                            </div>
 
+                            {/* Content */}
                             <div className="flex-1 overflow-hidden flex flex-col">
                                 <div className="flex-1 overflow-y-auto">
                                     {children}

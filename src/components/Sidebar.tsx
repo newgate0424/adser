@@ -17,9 +17,10 @@ interface SidebarProps {
     toggleSidebar: () => void
     userRole?: Role | null
     onMobileClose?: () => void
+    isMobile?: boolean
 }
 
-export function Sidebar({ isCollapsed, toggleSidebar, userRole = null, onMobileClose }: SidebarProps) {
+export function Sidebar({ isCollapsed, toggleSidebar, userRole = null, onMobileClose, isMobile = false }: SidebarProps) {
     const pathname = usePathname()
     const { t } = useLanguage()
 
@@ -39,8 +40,10 @@ export function Sidebar({ isCollapsed, toggleSidebar, userRole = null, onMobileC
 
     return (
         <div className={cn(
-            "flex flex-col bg-white rounded-xl shadow-sm h-full",
+            "flex flex-col bg-white shadow-sm h-full",
             "transition-all duration-300 ease-in-out",
+            // Remove rounded corners on mobile
+            isMobile ? "" : "rounded-xl",
             isCollapsed ? "w-16" : "w-64"
         )}>
             <div className={cn(
