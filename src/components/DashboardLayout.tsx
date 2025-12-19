@@ -74,13 +74,13 @@ export default function DashboardLayout({ children, user, userRole = null }: Das
                 />
             )}
 
-            {/* Sidebar - Mobile: overlay, Desktop: static */}
+            {/* Sidebar - Mobile: overlay (hidden by default), Desktop: static (always visible) */}
             <div className={cn(
                 "fixed md:relative z-50 md:z-auto h-full",
-                "transition-transform duration-300 ease-in-out",
-                // Mobile: slide from left
-                "md:translate-x-0",
-                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+                "transition-transform duration-300 ease-in-out md:transition-none",
+                // Mobile: hidden by default, slide in when open
+                // Desktop: always visible
+                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
             )}>
                 <Sidebar
                     isCollapsed={isCollapsed}
