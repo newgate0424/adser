@@ -507,7 +507,7 @@ export default function DashboardV2Page() {
                         <div className="mx-6 mt-4 p-4 bg-white dark:bg-zinc-800 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
 
                             {/* 1. Top Navigation Bar (Filters & Tabs) */}
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                            <div className="flex flex-col gap-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
                                 {/* Tabs Pilled */}
                                 <div className="flex p-1 bg-gray-100 dark:bg-zinc-800 rounded-lg overflow-x-auto">
                                     {tabs.map(tab => (
@@ -515,7 +515,7 @@ export default function DashboardV2Page() {
                                             key={tab.id}
                                             onClick={() => handleTabChange(tab.id)}
                                             className={cn(
-                                                "px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap",
+                                                "px-4 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap flex-shrink-0",
                                                 activeTab === tab.id
                                                     ? "bg-white dark:bg-zinc-700 text-primary shadow-sm"
                                                     : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
@@ -526,12 +526,12 @@ export default function DashboardV2Page() {
                                     ))}
                                 </div>
 
-                                {/* Filters Row */}
-                                <div className="flex flex-wrap items-center gap-2">
+                                {/* Filters Row - responsive */}
+                                <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2">
                                     <DatePickerWithRange date={dateRange} setDate={handleDateRangeChange} />
 
                                     <Select value={selectedView} onValueChange={handleViewChange}>
-                                        <SelectTrigger className="w-[120px] h-10"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="w-full sm:w-[120px] h-10"><SelectValue /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="team">ทีม</SelectItem>
                                             <SelectItem value="adser">แอดเซอร์</SelectItem>
@@ -539,7 +539,7 @@ export default function DashboardV2Page() {
                                     </Select>
 
                                     <Select value={chartPeriod} onValueChange={(v: any) => setChartPeriod(v)}>
-                                        <SelectTrigger className="w-[120px] h-10"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="w-full sm:w-[120px] h-10"><SelectValue /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="daily">รายวัน</SelectItem>
                                             <SelectItem value="monthly">รายเดือน</SelectItem>
@@ -548,7 +548,7 @@ export default function DashboardV2Page() {
 
                                     {(chartPeriod === 'daily') && (
                                         <Select value={selectedMonth} onValueChange={handleMonthChange}>
-                                            <SelectTrigger className="w-[100px] h-10"><SelectValue placeholder="Month" /></SelectTrigger>
+                                            <SelectTrigger className="w-full sm:w-[100px] h-10"><SelectValue placeholder="Month" /></SelectTrigger>
                                             <SelectContent>
                                                 {months.map(m => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
                                             </SelectContent>
@@ -558,7 +558,7 @@ export default function DashboardV2Page() {
                                     {/* Year filter should be visible for both daily and monthly */}
                                     {(chartPeriod === 'daily' || chartPeriod === 'monthly') && (
                                         <Select value={selectedYear} onValueChange={handleYearChange}>
-                                            <SelectTrigger className="w-[100px] h-10"><SelectValue placeholder="Year" /></SelectTrigger>
+                                            <SelectTrigger className="w-full sm:w-[100px] h-10"><SelectValue placeholder="Year" /></SelectTrigger>
                                             <SelectContent>
                                                 {years.map(y => <SelectItem key={y.value} value={y.value}>{y.label}</SelectItem>)}
                                             </SelectContent>
