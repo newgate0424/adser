@@ -1606,8 +1606,8 @@ export default function AdsTable() {
                 </div>
 
                 {/* Search and Actions Row */}
-                <div className="flex items-center justify-end gap-2 px-1">
-                    <div className="relative w-48">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 px-1">
+                    <div className="relative w-full sm:w-48">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder={t.common.search}
@@ -1617,13 +1617,13 @@ export default function AdsTable() {
                         />
                     </div>
                     {activeTab !== 'accounts' && (
-                        <>
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <DatePickerWithRange date={date} setDate={handleDateChange} />
                             <Select value={statusFilter} onValueChange={(value) => {
                                 setStatusFilter(value)
                                 updateUrl({ statusFilter: value })
                             }}>
-                                <SelectTrigger className="w-[160px] h-9">
+                                <SelectTrigger className="w-full sm:w-[160px] h-9">
                                     <SelectValue placeholder={t.common.allStatus} />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1633,39 +1633,41 @@ export default function AdsTable() {
                                     <SelectItem value="error">{t.status.ERROR}</SelectItem>
                                 </SelectContent>
                             </Select>
-                        </>
+                        </div>
                     )}
-                    <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => {
-                        // Reset cache
-                        lastFetchRef.current = null
-                        lastFetchTimeRef.current = null
-                        // Use noCache=false to allow Redis cache (faster)
-                        if (activeTab === 'accounts') fetchData('accounts', {}, false, false)
-                        else if (activeTab === 'campaigns') fetchData('campaigns', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds }, false, false)
-                        else if (activeTab === 'adsets') fetchData('adsets', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds, campaignIds: checkedCampaignIds.length > 0 ? checkedCampaignIds : selectedCampaignIds }, false, false)
-                        else if (activeTab === 'ads') fetchData('ads', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds, campaignIds: checkedCampaignIds.length > 0 ? checkedCampaignIds : selectedCampaignIds, adSetIds: checkedAdSetIds.length > 0 ? checkedAdSetIds : selectedAdSetIds }, false, false)
-                    }} disabled={isLoading}>
-                        <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="icon" className="h-9 w-9">
-                                <LayoutGrid className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
-                            <DropdownMenuLabel>ตัวเลือกการปรับแต่ง</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => setColumnsDialogOpen(true)}>
-                                <LayoutGrid className="mr-2 h-4 w-4" />
-                                <span>ปรับแต่งคอลัมน์</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setFormattingDialogOpen(true)}>
-                                <Flag className="mr-2 h-4 w-4" />
-                                <span>การจัดรูปแบบตามเงื่อนไข</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0" onClick={() => {
+                            // Reset cache
+                            lastFetchRef.current = null
+                            lastFetchTimeRef.current = null
+                            // Use noCache=false to allow Redis cache (faster)
+                            if (activeTab === 'accounts') fetchData('accounts', {}, false, false)
+                            else if (activeTab === 'campaigns') fetchData('campaigns', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds }, false, false)
+                            else if (activeTab === 'adsets') fetchData('adsets', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds, campaignIds: checkedCampaignIds.length > 0 ? checkedCampaignIds : selectedCampaignIds }, false, false)
+                            else if (activeTab === 'ads') fetchData('ads', { accountIds: checkedAccountIds.length > 0 ? checkedAccountIds : selectedAccountIds, campaignIds: checkedCampaignIds.length > 0 ? checkedCampaignIds : selectedCampaignIds, adSetIds: checkedAdSetIds.length > 0 ? checkedAdSetIds : selectedAdSetIds }, false, false)
+                        }} disabled={isLoading}>
+                            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0">
+                                    <LayoutGrid className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel>ตัวเลือกการปรับแต่ง</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => setColumnsDialogOpen(true)}>
+                                    <LayoutGrid className="mr-2 h-4 w-4" />
+                                    <span>ปรับแต่งคอลัมน์</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setFormattingDialogOpen(true)}>
+                                    <Flag className="mr-2 h-4 w-4" />
+                                    <span>การจัดรูปแบบตามเงื่อนไข</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </div>
 
@@ -1693,518 +1695,522 @@ export default function AdsTable() {
             <div className="flex-1 flex flex-col border rounded-xl overflow-hidden mt-4 relative">
                 {/* Single Table with sticky header */}
                 <div ref={bodyRef} className="flex-1 overflow-auto">
-                    <table className="w-full caption-bottom text-sm text-left">
-                        <TableHeader className="bg-gray-50 sticky top-0 z-10">
-                            <TableRow className="hover:bg-gray-50 border-b h-14">
-                                {activeTab !== 'ads' && (
+                    {/* Horizontal scroll wrapper for mobile */}
+                    <div className="min-w-full overflow-x-auto">
+                        <table className="w-full caption-bottom text-sm text-left">
+                            <TableHeader className="bg-gray-50 sticky top-0 z-10">
+                                <TableRow className="hover:bg-gray-50 border-b h-14">
+                                    {activeTab !== 'ads' && (
+                                        <TableHead
+                                            className="border-r p-0 text-center cursor-pointer bg-gray-50 w-[40px] min-w-[40px] max-w-[40px]"
+                                            onClick={() => toggleSelectAll(!(data.length > 0 && currentSelection.length === data.length))}
+                                        >
+                                            <div className="flex items-center justify-center h-full w-full">
+                                                <Checkbox
+                                                    className="h-5 w-5 pointer-events-none"
+                                                    checked={data.length > 0 && currentSelection.length === data.length}
+                                                />
+                                            </div>
+                                        </TableHead>
+                                    )}
+                                    <TableHead className="border-r text-center bg-gray-50 w-[40px] min-w-[40px] max-w-[40px]">#</TableHead>
+                                    {activeTab !== 'accounts' && (
+                                        <TableHead className="border-r whitespace-nowrap text-center bg-gray-50">{t.common.off} / {t.common.on}</TableHead>
+                                    )}
+                                    {activeTab === 'ads' && (
+                                        <>
+                                            <TableHead className="cursor-pointer border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('accountName')}>
+                                                <div className="flex items-center gap-1">{t.common.account || 'Account'} <SortIcon columnKey="accountName" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('pageId')}>
+                                                <div className="flex items-center gap-1">{t.common.page} <SortIcon columnKey="pageId" /></div>
+                                            </TableHead>
+                                        </>
+                                    )}
                                     <TableHead
-                                        className="border-r p-0 text-center cursor-pointer bg-gray-50 w-[40px] min-w-[40px] max-w-[40px]"
-                                        onClick={() => toggleSelectAll(!(data.length > 0 && currentSelection.length === data.length))}
+                                        className="cursor-pointer border-r whitespace-nowrap bg-gray-50"
+                                        onClick={() => handleSort('name')}
                                     >
-                                        <div className="flex items-center justify-center h-full w-full">
-                                            <Checkbox
-                                                className="h-5 w-5 pointer-events-none"
-                                                checked={data.length > 0 && currentSelection.length === data.length}
-                                            />
+                                        <div className="flex items-center gap-1">
+                                            {t.common.name} <SortIcon columnKey="name" />
                                         </div>
                                     </TableHead>
-                                )}
-                                <TableHead className="border-r text-center bg-gray-50 w-[40px] min-w-[40px] max-w-[40px]">#</TableHead>
-                                {activeTab !== 'accounts' && (
-                                    <TableHead className="border-r whitespace-nowrap text-center bg-gray-50">{t.common.off} / {t.common.on}</TableHead>
-                                )}
-                                {activeTab === 'ads' && (
-                                    <>
-                                        <TableHead className="cursor-pointer border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('accountName')}>
-                                            <div className="flex items-center gap-1">{t.common.account || 'Account'} <SortIcon columnKey="accountName" /></div>
+                                    {activeTab === 'ads' && (
+                                        <TableHead className="border-r whitespace-nowrap bg-gray-50 min-w-[120px]">
+                                            {t.common.target || 'Target'}
                                         </TableHead>
-                                        <TableHead className="cursor-pointer border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('pageId')}>
-                                            <div className="flex items-center gap-1">{t.common.page} <SortIcon columnKey="pageId" /></div>
-                                        </TableHead>
-                                    </>
-                                )}
-                                <TableHead
-                                    className="cursor-pointer border-r whitespace-nowrap bg-gray-50"
-                                    onClick={() => handleSort('name')}
-                                >
-                                    <div className="flex items-center gap-1">
-                                        {t.common.name} <SortIcon columnKey="name" />
-                                    </div>
-                                </TableHead>
-                                {activeTab === 'ads' && (
-                                    <TableHead className="border-r whitespace-nowrap bg-gray-50 min-w-[120px]">
-                                        {t.common.target || 'Target'}
-                                    </TableHead>
-                                )}
-                                {activeTab === 'accounts' && (
-                                    <>
-                                        <TableHead className="cursor-pointer border-r whitespace-nowrap text-center bg-gray-50" onClick={() => handleSort('deliveryStatus')}>
-                                            <div className="flex items-center justify-center gap-1">{t.common.status} <SortIcon columnKey="deliveryStatus" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer border-r whitespace-nowrap text-center bg-gray-50" onClick={() => handleSort('activeAdsCount')}>
-                                            <div className="flex items-center justify-center gap-1">Active Ads <SortIcon columnKey="activeAdsCount" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer border-r whitespace-nowrap text-right bg-gray-50" onClick={() => handleSort('spendCap')}>
-                                            <div className="flex items-center justify-end gap-1">Spending Cap <SortIcon columnKey="spendCap" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer text-left border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('paymentMethod')}>
-                                            <div className="flex items-center gap-1">{t.common.paymentMethod} <SortIcon columnKey="paymentMethod" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('timezone')}>
-                                            <div className="flex items-center justify-end gap-1">{t.common.timeZone} <SortIcon columnKey="timezone" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('country')}>
-                                            <div className="flex items-center justify-end gap-1">{t.common.nationality} <SortIcon columnKey="country" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('currency')}>
-                                            <div className="flex items-center justify-end gap-1">{t.common.currency} <SortIcon columnKey="currency" /></div>
-                                        </TableHead>
-                                        <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('spendCap')}>
-                                            <div className="flex items-center justify-end gap-1">Limit <SortIcon columnKey="spendCap" /></div>
-                                        </TableHead>
-                                        <TableHead className="text-right border-r whitespace-nowrap bg-gray-50">{t.common.action}</TableHead>
-                                    </>
-                                )}
-                                {activeTab !== 'accounts' && (
-                                    <>
-                                        {/* Dynamic headers based on visibleColumns - filter out hardcoded columns */}
-                                        {visibleColumns
-                                            .filter(colKey => {
-                                                // These columns are hardcoded and should not be rendered dynamically
-                                                const hardcodedColumns = ['name']
-                                                // For ads tab, also exclude account, page, and targeting
-                                                if (activeTab === 'ads') {
-                                                    return !['name', 'accountName', 'pageName', 'targeting'].includes(colKey)
-                                                }
-                                                return !hardcodedColumns.includes(colKey)
-                                            })
-                                            .map((colKey, index, filteredArray) => {
-                                                const align = getColumnAlign(colKey)
-                                                const sortable = isColumnSortable(colKey)
-                                                const label = getColumnLabel(colKey)
-                                                const isLast = index === filteredArray.length - 1
-                                                const alignClass = align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : ''
-                                                const justifyClass = align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : ''
+                                    )}
+                                    {activeTab === 'accounts' && (
+                                        <>
+                                            <TableHead className="cursor-pointer border-r whitespace-nowrap text-center bg-gray-50" onClick={() => handleSort('deliveryStatus')}>
+                                                <div className="flex items-center justify-center gap-1">{t.common.status} <SortIcon columnKey="deliveryStatus" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer border-r whitespace-nowrap text-center bg-gray-50" onClick={() => handleSort('activeAdsCount')}>
+                                                <div className="flex items-center justify-center gap-1">Active Ads <SortIcon columnKey="activeAdsCount" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer border-r whitespace-nowrap text-right bg-gray-50" onClick={() => handleSort('spendCap')}>
+                                                <div className="flex items-center justify-end gap-1">Spending Cap <SortIcon columnKey="spendCap" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer text-left border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('paymentMethod')}>
+                                                <div className="flex items-center gap-1">{t.common.paymentMethod} <SortIcon columnKey="paymentMethod" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('timezone')}>
+                                                <div className="flex items-center justify-end gap-1">{t.common.timeZone} <SortIcon columnKey="timezone" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('country')}>
+                                                <div className="flex items-center justify-end gap-1">{t.common.nationality} <SortIcon columnKey="country" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('currency')}>
+                                                <div className="flex items-center justify-end gap-1">{t.common.currency} <SortIcon columnKey="currency" /></div>
+                                            </TableHead>
+                                            <TableHead className="cursor-pointer text-right border-r whitespace-nowrap bg-gray-50" onClick={() => handleSort('spendCap')}>
+                                                <div className="flex items-center justify-end gap-1">Limit <SortIcon columnKey="spendCap" /></div>
+                                            </TableHead>
+                                            <TableHead className="text-right border-r whitespace-nowrap bg-gray-50">{t.common.action}</TableHead>
+                                        </>
+                                    )}
+                                    {activeTab !== 'accounts' && (
+                                        <>
+                                            {/* Dynamic headers based on visibleColumns - filter out hardcoded columns */}
+                                            {visibleColumns
+                                                .filter(colKey => {
+                                                    // These columns are hardcoded and should not be rendered dynamically
+                                                    const hardcodedColumns = ['name']
+                                                    // For ads tab, also exclude account, page, and targeting
+                                                    if (activeTab === 'ads') {
+                                                        return !['name', 'accountName', 'pageName', 'targeting'].includes(colKey)
+                                                    }
+                                                    return !hardcodedColumns.includes(colKey)
+                                                })
+                                                .map((colKey, index, filteredArray) => {
+                                                    const align = getColumnAlign(colKey)
+                                                    const sortable = isColumnSortable(colKey)
+                                                    const label = getColumnLabel(colKey)
+                                                    const isLast = index === filteredArray.length - 1
+                                                    const alignClass = align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : ''
+                                                    const justifyClass = align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : ''
 
-                                                return (
-                                                    <TableHead
-                                                        key={colKey}
-                                                        className={`${sortable ? 'cursor-pointer' : ''} ${!isLast ? 'border-r' : ''} whitespace-nowrap bg-gray-50 ${alignClass}`}
-                                                        onClick={sortable ? () => handleSort(colKey) : undefined}
-                                                    >
-                                                        <div className={`flex items-center gap-1 ${justifyClass}`}>
-                                                            {label}
-                                                            {sortable && <SortIcon columnKey={colKey} />}
-                                                        </div>
-                                                    </TableHead>
-                                                )
-                                            })}
-                                    </>
-                                )}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody className="[&_tr:last-child]:border-b [&_tr:last-child]:border-gray-200">
-                            {isLoading ? (
-                                // Skeleton loading rows
-                                [...Array(8)].map((_, rowIndex) => (
-                                    <TableRow key={`skeleton-${rowIndex}`} className={`h-14 ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                                        {/* Checkbox */}
-                                        <TableCell className="border-r p-0 text-center w-[40px] min-w-[40px] max-w-[40px]">
-                                            <div className="flex items-center justify-center h-full w-full">
-                                                <div className="h-5 w-5 rounded bg-gray-200 animate-pulse" />
-                                            </div>
-                                        </TableCell>
-                                        {/* # */}
-                                        <TableCell className="border-r text-center w-[40px] min-w-[40px] max-w-[40px]">
-                                            <div className="h-4 w-4 mx-auto rounded bg-gray-200 animate-pulse" />
-                                        </TableCell>
-                                        {activeTab !== 'accounts' && (
-                                            /* On/Off Switch */
-                                            <TableCell className="border-r text-center">
-                                                <div className="h-5 w-9 mx-auto rounded-full bg-gray-200 animate-pulse" />
-                                            </TableCell>
-                                        )}
-                                        {activeTab === 'ads' && (
-                                            /* Page */
-                                            <TableCell className="border-r">
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="h-4 w-24 rounded bg-gray-200 animate-pulse" />
-                                                    <div className="h-3 w-16 rounded bg-gray-200 animate-pulse" />
-                                                </div>
-                                            </TableCell>
-                                        )}
-                                        {/* Name */}
-                                        <TableCell className="border-r">
-                                            {activeTab === 'ads' ? (
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded bg-gray-200 animate-pulse flex-none" />
-                                                    <div className="flex flex-col gap-1">
-                                                        <div className="h-4 w-32 rounded bg-gray-200 animate-pulse" />
-                                                        <div className="h-3 w-20 rounded bg-gray-200 animate-pulse" />
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="h-4 w-40 rounded bg-gray-200 animate-pulse" />
-                                                    <div className="h-3 w-24 rounded bg-gray-200 animate-pulse" />
-                                                </div>
-                                            )}
-                                        </TableCell>
-                                        {activeTab === 'accounts' ? (
-                                            <>
-                                                {/* Status, Active Ads, Spending Cap, Payment, Timezone, Country, Currency, Limit, Action */}
-                                                <TableCell className="border-r text-center"><div className="h-5 w-16 mx-auto rounded-full bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-center"><div className="h-4 w-8 mx-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-20 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r"><div className="h-5 w-24 rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-8 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-10 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="text-right"><div className="h-6 w-6 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                            </>
-                                        ) : (
-                                            <>
-                                                {/* Delivery, Results, Cost/Result, Budget, Impressions, Reach, Post Eng, Clicks, Msg, Spend, Cost/Msg, Video metrics */}
-                                                <TableCell className="border-r"><div className="h-5 w-16 rounded-full bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-20 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-10 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                                <TableCell className="text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
-                                            </>
-                                        )}
-                                    </TableRow>
-                                ))
-                            ) : data.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={activeTab === 'accounts' ? 10 : 24} className="h-24 text-center">
-                                        {t.common.noResults}
-                                    </TableCell>
+                                                    return (
+                                                        <TableHead
+                                                            key={colKey}
+                                                            className={`${sortable ? 'cursor-pointer' : ''} ${!isLast ? 'border-r' : ''} whitespace-nowrap bg-gray-50 ${alignClass}`}
+                                                            onClick={sortable ? () => handleSort(colKey) : undefined}
+                                                        >
+                                                            <div className={`flex items-center gap-1 ${justifyClass}`}>
+                                                                {label}
+                                                                {sortable && <SortIcon columnKey={colKey} />}
+                                                            </div>
+                                                        </TableHead>
+                                                    )
+                                                })}
+                                        </>
+                                    )}
                                 </TableRow>
-                            ) : (
-                                sortedData.map((item, index) => (
-                                    <TableRow
-                                        key={item.id}
-                                        className={`cursor-pointer hover:bg-muted/50 h-14 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
-                                        onClick={() => handleRowClick(item)}
-                                    >
-                                        {activeTab !== 'ads' && (
-                                            <TableCell
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    toggleSelectRow(item.id, !currentSelection.includes(item.id))
-                                                }}
-                                                className="border-r p-0 text-center cursor-pointer w-[40px] min-w-[40px] max-w-[40px]"
-                                            >
+                            </TableHeader>
+                            <TableBody className="[&_tr:last-child]:border-b [&_tr:last-child]:border-gray-200">
+                                {isLoading ? (
+                                    // Skeleton loading rows
+                                    [...Array(8)].map((_, rowIndex) => (
+                                        <TableRow key={`skeleton-${rowIndex}`} className={`h-14 ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                                            {/* Checkbox */}
+                                            <TableCell className="border-r p-0 text-center w-[40px] min-w-[40px] max-w-[40px]">
                                                 <div className="flex items-center justify-center h-full w-full">
-                                                    <Checkbox
-                                                        className="h-5 w-5 pointer-events-none"
-                                                        checked={currentSelection.includes(item.id)}
-                                                    />
+                                                    <div className="h-5 w-5 rounded bg-gray-200 animate-pulse" />
                                                 </div>
                                             </TableCell>
-                                        )}
-                                        <TableCell className="text-muted-foreground border-r text-center w-[40px] min-w-[40px] max-w-[40px]">{index + 1}</TableCell>
-                                        {activeTab !== 'accounts' && (
-                                            <TableCell className="border-r text-center">
-                                                <div
-                                                    className="flex items-center justify-center"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        if (!togglingIds.has(item.id)) {
-                                                            handleToggleStatus(item.id, item.status, e)
-                                                        }
-                                                    }}
-                                                >
-                                                    <Switch
-                                                        checked={item.status === 'ACTIVE'}
-                                                        disabled={togglingIds.has(item.id)}
-                                                        onCheckedChange={(checked) => {
-                                                            // This is handled by the parent div onClick
-                                                        }}
-                                                    />
-                                                </div>
+                                            {/* # */}
+                                            <TableCell className="border-r text-center w-[40px] min-w-[40px] max-w-[40px]">
+                                                <div className="h-4 w-4 mx-auto rounded bg-gray-200 animate-pulse" />
                                             </TableCell>
-                                        )}
-                                        {activeTab === 'ads' && (
-                                            <>
-                                                <TableCell className="border-r px-2">
-                                                    <a
-                                                        href={`https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${(item.account_id || '').replace('act_', '')}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-sm whitespace-nowrap hover:text-blue-600 hover:underline cursor-pointer"
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        {item.accountName || item.account_id || '-'}
-                                                    </a>
+                                            {activeTab !== 'accounts' && (
+                                                /* On/Off Switch */
+                                                <TableCell className="border-r text-center">
+                                                    <div className="h-5 w-9 mx-auto rounded-full bg-gray-200 animate-pulse" />
                                                 </TableCell>
-                                                <TableCell className="border-r px-2">
-                                                    {item.pageId ? (
-                                                        <div className="flex flex-col min-w-0">
-                                                            <a
-                                                                href={`https://www.facebook.com/${item.pageId}`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-sm whitespace-nowrap hover:text-blue-600 hover:underline w-fit"
-                                                                onClick={(e) => e.stopPropagation()}
-                                                            >
-                                                                {item.pageName || item.pageId}
-                                                            </a>
-                                                            <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.pageId}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-muted-foreground">-</span>
-                                                    )}
-                                                </TableCell>
-                                            </>
-                                        )}
-                                        <TableCell className="font-medium border-r">
-                                            {activeTab === 'ads' ? (
-                                                <div className="flex items-center gap-2">
-                                                    {item.creative?.thumbnailUrl || item.creative?.imageUrl ? (
-                                                        <img
-                                                            src={item.creative.thumbnailUrl || item.creative.imageUrl}
-                                                            alt={item.name}
-                                                            className="h-10 w-10 object-cover rounded flex-none"
-                                                            referrerPolicy="no-referrer"
-                                                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/40x40?text=No+Img' }}
-                                                        />
-                                                    ) : (
-                                                        <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground flex-none">No</div>
-                                                    )}
-                                                    <div className="flex flex-col min-w-0">
-                                                        <span className="font-medium text-sm whitespace-nowrap">{item.name}</span>
-                                                        <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.id}</span>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className="font-medium whitespace-nowrap" title={item.name}>{item.name}</span>
-                                                    <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.id}</span>
-                                                </div>
                                             )}
-                                        </TableCell>
-                                        {/* Target Column - Only for Ads tab */}
-                                        {activeTab === 'ads' && (
-                                            <TableCell className="border-r px-2 relative">
-                                                {item.targeting ? (
-                                                    <div
-                                                        className="flex flex-col text-xs cursor-pointer"
-                                                        onDoubleClick={(e) => {
-                                                            e.stopPropagation()
-                                                            setExpandedTargeting(prev => {
-                                                                const next = new Set(prev)
-                                                                if (next.has(item.id)) {
-                                                                    next.delete(item.id)
-                                                                } else {
-                                                                    next.add(item.id)
-                                                                }
-                                                                return next
-                                                            })
-                                                        }}
-                                                    >
-                                                        {expandedTargeting.has(item.id) ? (
-                                                            <>
-                                                                <div
-                                                                    className="fixed inset-0 z-40"
-                                                                    onClick={() => {
-                                                                        setExpandedTargeting(prev => {
-                                                                            const next = new Set(prev)
-                                                                            next.delete(item.id)
-                                                                            return next
-                                                                        })
-                                                                    }}
-                                                                />
-                                                                <div className="absolute left-0 top-0 z-50 bg-white border border-gray-300 shadow-lg p-3 w-96 max-h-[250px] rounded dark:bg-gray-800 dark:border-gray-600 overflow-y-auto">
-                                                                    <div className="flex justify-between items-start mb-2 sticky top-0 bg-white dark:bg-gray-800 pb-2">
-                                                                        <span className="font-medium text-sm">Target</span>
-                                                                        <button
-                                                                            className="text-gray-400 hover:text-gray-600 ml-2 text-lg leading-none"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation()
-                                                                                setExpandedTargeting(prev => {
-                                                                                    const next = new Set(prev)
-                                                                                    next.delete(item.id)
-                                                                                    return next
-                                                                                })
-                                                                            }}
-                                                                        >×</button>
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        {item.targeting.age && (
-                                                                            <div>
-                                                                                <span className="font-medium text-xs">อายุ: </span>
-                                                                                <span className="text-muted-foreground text-xs">{item.targeting.age}</span>
-                                                                            </div>
-                                                                        )}
-                                                                        {item.targeting.countries && (
-                                                                            <div>
-                                                                                <span className="font-medium text-xs">ประเทศ: </span>
-                                                                                <span className="text-muted-foreground text-xs">
-                                                                                    {Array.isArray(item.targeting.countries)
-                                                                                        ? item.targeting.countries.join(', ')
-                                                                                        : item.targeting.countries}
-                                                                                </span>
-                                                                            </div>
-                                                                        )}
-                                                                        {item.targeting.interests && (
-                                                                            <div>
-                                                                                <span className="font-medium text-xs">ความสนใจ: </span>
-                                                                                <span className="text-muted-foreground text-xs whitespace-normal block">
-                                                                                    {Array.isArray(item.targeting.interests)
-                                                                                        ? item.targeting.interests.join(', ')
-                                                                                        : item.targeting.interests}
-                                                                                </span>
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                {item.targeting.age && <span>อายุ: {item.targeting.age}</span>}
-                                                                {item.targeting.countries && (
-                                                                    <span className="text-muted-foreground truncate max-w-[100px]">
-                                                                        ประเทศ: {Array.isArray(item.targeting.countries)
-                                                                            ? item.targeting.countries.slice(0, 2).join(', ') + (item.targeting.countries.length > 2 ? '...' : '')
-                                                                            : item.targeting.countries}
-                                                                    </span>
-                                                                )}
-                                                                {item.targeting.interests && (
-                                                                    <span className="text-muted-foreground truncate max-w-[100px]">
-                                                                        ความสนใจ: {Array.isArray(item.targeting.interests)
-                                                                            ? item.targeting.interests.slice(0, 2).join(', ') + (item.targeting.interests.length > 2 ? '...' : '')
-                                                                            : item.targeting.interests}
-                                                                    </span>
-                                                                )}
-                                                            </>
-                                                        )}
+                                            {activeTab === 'ads' && (
+                                                /* Page */
+                                                <TableCell className="border-r">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="h-4 w-24 rounded bg-gray-200 animate-pulse" />
+                                                        <div className="h-3 w-16 rounded bg-gray-200 animate-pulse" />
+                                                    </div>
+                                                </TableCell>
+                                            )}
+                                            {/* Name */}
+                                            <TableCell className="border-r">
+                                                {activeTab === 'ads' ? (
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-8 w-8 rounded bg-gray-200 animate-pulse flex-none" />
+                                                        <div className="flex flex-col gap-1">
+                                                            <div className="h-4 w-32 rounded bg-gray-200 animate-pulse" />
+                                                            <div className="h-3 w-20 rounded bg-gray-200 animate-pulse" />
+                                                        </div>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-muted-foreground text-xs">-</span>
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="h-4 w-40 rounded bg-gray-200 animate-pulse" />
+                                                        <div className="h-3 w-24 rounded bg-gray-200 animate-pulse" />
+                                                    </div>
                                                 )}
                                             </TableCell>
-                                        )}
-                                        {activeTab === 'accounts' && (
-                                            <>
-                                                <TableCell className="border-r text-center">
-                                                    <div className="flex items-center justify-center">
-                                                        {getDeliveryStatus(item, 'accounts')}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="border-r text-center">
-                                                    <span className="text-sm font-medium">{item.activeAdsCount || 0}</span>
-                                                </TableCell>
+                                            {activeTab === 'accounts' ? (
+                                                <>
+                                                    {/* Status, Active Ads, Spending Cap, Payment, Timezone, Country, Currency, Limit, Action */}
+                                                    <TableCell className="border-r text-center"><div className="h-5 w-16 mx-auto rounded-full bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-center"><div className="h-4 w-8 mx-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-20 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r"><div className="h-5 w-24 rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-8 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-10 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="text-right"><div className="h-6 w-6 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {/* Delivery, Results, Cost/Result, Budget, Impressions, Reach, Post Eng, Clicks, Msg, Spend, Cost/Msg, Video metrics */}
+                                                    <TableCell className="border-r"><div className="h-5 w-16 rounded-full bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-20 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-10 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-16 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-12 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="border-r text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                    <TableCell className="text-right"><div className="h-4 w-14 ml-auto rounded bg-gray-200 animate-pulse" /></TableCell>
+                                                </>
+                                            )}
+                                        </TableRow>
+                                    ))
+                                ) : data.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={activeTab === 'accounts' ? 10 : 24} className="h-24 text-center">
+                                            {t.common.noResults}
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    sortedData.map((item, index) => (
+                                        <TableRow
+                                            key={item.id}
+                                            className={`cursor-pointer hover:bg-muted/50 h-14 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
+                                            onClick={() => handleRowClick(item)}
+                                        >
+                                            {activeTab !== 'ads' && (
                                                 <TableCell
-                                                    className="text-right border-r cursor-pointer hover:bg-gray-50"
                                                     onClick={(e) => {
                                                         e.stopPropagation()
-                                                        openSpendingLimitDialog(item, 'change')
+                                                        toggleSelectRow(item.id, !currentSelection.includes(item.id))
                                                     }}
+                                                    className="border-r p-0 text-center cursor-pointer w-[40px] min-w-[40px] max-w-[40px]"
                                                 >
-                                                    {item.spendCap && parseFloat(item.spendCap) > 0 ? (
-                                                        <div className="group relative flex items-center justify-end gap-2">
-                                                            {/* Edit icon - shows on hover */}
-                                                            <Pencil className="h-3.5 w-3.5 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                                            {/* Progress bar */}
-                                                            <div className="flex items-center gap-2 min-w-[80px]">
-                                                                {(() => {
-                                                                    const spent = parseFloat(item.amountSpent || '0') / 100
-                                                                    const cap = parseFloat(item.spendCap) / 100
-                                                                    const percentage = cap > 0 ? Math.min(100, Math.round((spent / cap) * 100)) : 0
-                                                                    const progressColor = percentage >= 90 ? 'bg-red-500' : percentage >= 70 ? 'bg-orange-400' : 'bg-emerald-500'
-
-                                                                    return (
-                                                                        <>
-                                                                            <div className="relative w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                                                                <div
-                                                                                    className={`absolute left-0 top-0 h-full ${progressColor} rounded-full transition-all`}
-                                                                                    style={{ width: `${percentage}%` }}
-                                                                                />
-                                                                            </div>
-                                                                            <span className="text-sm text-gray-600 w-10 text-right">{percentage}%</span>
-                                                                        </>
-                                                                    )
-                                                                })()}
+                                                    <div className="flex items-center justify-center h-full w-full">
+                                                        <Checkbox
+                                                            className="h-5 w-5 pointer-events-none"
+                                                            checked={currentSelection.includes(item.id)}
+                                                        />
+                                                    </div>
+                                                </TableCell>
+                                            )}
+                                            <TableCell className="text-muted-foreground border-r text-center w-[40px] min-w-[40px] max-w-[40px]">{index + 1}</TableCell>
+                                            {activeTab !== 'accounts' && (
+                                                <TableCell className="border-r text-center">
+                                                    <div
+                                                        className="flex items-center justify-center"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            if (!togglingIds.has(item.id)) {
+                                                                handleToggleStatus(item.id, item.status, e)
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Switch
+                                                            checked={item.status === 'ACTIVE'}
+                                                            disabled={togglingIds.has(item.id)}
+                                                            onCheckedChange={(checked) => {
+                                                                // This is handled by the parent div onClick
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </TableCell>
+                                            )}
+                                            {activeTab === 'ads' && (
+                                                <>
+                                                    <TableCell className="border-r px-2">
+                                                        <a
+                                                            href={`https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${(item.account_id || '').replace('act_', '')}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-sm whitespace-nowrap hover:text-blue-600 hover:underline cursor-pointer"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            {item.accountName || item.account_id || '-'}
+                                                        </a>
+                                                    </TableCell>
+                                                    <TableCell className="border-r px-2">
+                                                        {item.pageId ? (
+                                                            <div className="flex flex-col min-w-0">
+                                                                <a
+                                                                    href={`https://www.facebook.com/${item.pageId}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-sm whitespace-nowrap hover:text-blue-600 hover:underline w-fit"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    {item.pageName || item.pageId}
+                                                                </a>
+                                                                <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.pageId}</span>
                                                             </div>
-
-                                                            {/* Tooltip with amount */}
-                                                            <div className="absolute top-full right-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                                                                <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                                                                    {formatCurrency(parseFloat(item.amountSpent || '0') / 100, item.currency || 'USD')} / {formatCurrency(parseFloat(item.spendCap) / 100, item.currency || 'USD')}
-                                                                </div>
-                                                            </div>
+                                                        ) : (
+                                                            <span className="text-muted-foreground">-</span>
+                                                        )}
+                                                    </TableCell>
+                                                </>
+                                            )}
+                                            <TableCell className="font-medium border-r">
+                                                {activeTab === 'ads' ? (
+                                                    <div className="flex items-center gap-2">
+                                                        {item.creative?.thumbnailUrl || item.creative?.imageUrl ? (
+                                                            <img
+                                                                src={item.creative.thumbnailUrl || item.creative.imageUrl}
+                                                                alt={item.name}
+                                                                className="h-10 w-10 object-cover rounded flex-none"
+                                                                referrerPolicy="no-referrer"
+                                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/40x40?text=No+Img' }}
+                                                            />
+                                                        ) : (
+                                                            <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground flex-none">No</div>
+                                                        )}
+                                                        <div className="flex flex-col min-w-0">
+                                                            <span className="font-medium text-sm whitespace-nowrap">{item.name}</span>
+                                                            <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.id}</span>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="font-medium whitespace-nowrap" title={item.name}>{item.name}</span>
+                                                        <span className="text-xs text-muted-foreground whitespace-nowrap">ID: {item.id}</span>
+                                                    </div>
+                                                )}
+                                            </TableCell>
+                                            {/* Target Column - Only for Ads tab */}
+                                            {activeTab === 'ads' && (
+                                                <TableCell className="border-r px-2 relative">
+                                                    {item.targeting ? (
+                                                        <div
+                                                            className="flex flex-col text-xs cursor-pointer"
+                                                            onDoubleClick={(e) => {
+                                                                e.stopPropagation()
+                                                                setExpandedTargeting(prev => {
+                                                                    const next = new Set(prev)
+                                                                    if (next.has(item.id)) {
+                                                                        next.delete(item.id)
+                                                                    } else {
+                                                                        next.add(item.id)
+                                                                    }
+                                                                    return next
+                                                                })
+                                                            }}
+                                                        >
+                                                            {expandedTargeting.has(item.id) ? (
+                                                                <>
+                                                                    <div
+                                                                        className="fixed inset-0 z-40"
+                                                                        onClick={() => {
+                                                                            setExpandedTargeting(prev => {
+                                                                                const next = new Set(prev)
+                                                                                next.delete(item.id)
+                                                                                return next
+                                                                            })
+                                                                        }}
+                                                                    />
+                                                                    <div className="absolute left-0 top-0 z-50 bg-white border border-gray-300 shadow-lg p-3 w-96 max-h-[250px] rounded dark:bg-gray-800 dark:border-gray-600 overflow-y-auto">
+                                                                        <div className="flex justify-between items-start mb-2 sticky top-0 bg-white dark:bg-gray-800 pb-2">
+                                                                            <span className="font-medium text-sm">Target</span>
+                                                                            <button
+                                                                                className="text-gray-400 hover:text-gray-600 ml-2 text-lg leading-none"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation()
+                                                                                    setExpandedTargeting(prev => {
+                                                                                        const next = new Set(prev)
+                                                                                        next.delete(item.id)
+                                                                                        return next
+                                                                                    })
+                                                                                }}
+                                                                            >×</button>
+                                                                        </div>
+                                                                        <div className="space-y-2">
+                                                                            {item.targeting.age && (
+                                                                                <div>
+                                                                                    <span className="font-medium text-xs">อายุ: </span>
+                                                                                    <span className="text-muted-foreground text-xs">{item.targeting.age}</span>
+                                                                                </div>
+                                                                            )}
+                                                                            {item.targeting.countries && (
+                                                                                <div>
+                                                                                    <span className="font-medium text-xs">ประเทศ: </span>
+                                                                                    <span className="text-muted-foreground text-xs">
+                                                                                        {Array.isArray(item.targeting.countries)
+                                                                                            ? item.targeting.countries.join(', ')
+                                                                                            : item.targeting.countries}
+                                                                                    </span>
+                                                                                </div>
+                                                                            )}
+                                                                            {item.targeting.interests && (
+                                                                                <div>
+                                                                                    <span className="font-medium text-xs">ความสนใจ: </span>
+                                                                                    <span className="text-muted-foreground text-xs whitespace-normal block">
+                                                                                        {Array.isArray(item.targeting.interests)
+                                                                                            ? item.targeting.interests.join(', ')
+                                                                                            : item.targeting.interests}
+                                                                                    </span>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {item.targeting.age && <span>อายุ: {item.targeting.age}</span>}
+                                                                    {item.targeting.countries && (
+                                                                        <span className="text-muted-foreground truncate max-w-[100px]">
+                                                                            ประเทศ: {Array.isArray(item.targeting.countries)
+                                                                                ? item.targeting.countries.slice(0, 2).join(', ') + (item.targeting.countries.length > 2 ? '...' : '')
+                                                                                : item.targeting.countries}
+                                                                        </span>
+                                                                    )}
+                                                                    {item.targeting.interests && (
+                                                                        <span className="text-muted-foreground truncate max-w-[100px]">
+                                                                            ความสนใจ: {Array.isArray(item.targeting.interests)
+                                                                                ? item.targeting.interests.slice(0, 2).join(', ') + (item.targeting.interests.length > 2 ? '...' : '')
+                                                                                : item.targeting.interests}
+                                                                        </span>
+                                                                    )}
+                                                                </>
+                                                            )}
                                                         </div>
                                                     ) : (
-                                                        <div className="flex items-center justify-end gap-1 text-blue-600 hover:text-blue-700 text-sm">
-                                                            Set Limit
-                                                            <PlusCircle className="h-4 w-4" />
+                                                        <span className="text-muted-foreground text-xs">-</span>
+                                                    )}
+                                                </TableCell>
+                                            )}
+                                            {activeTab === 'accounts' && (
+                                                <>
+                                                    <TableCell className="border-r text-center">
+                                                        <div className="flex items-center justify-center">
+                                                            {getDeliveryStatus(item, 'accounts')}
                                                         </div>
-                                                    )}
-                                                </TableCell>
-                                                <TableCell className="text-left border-r">
-                                                    <PaymentMethodCell value={item.paymentMethod} />
-                                                </TableCell>
-                                                <TableCell className="text-right border-r">{item.timezone}</TableCell>
-                                                <TableCell className="text-right border-r">{item.country}</TableCell>
-                                                <TableCell className="text-right border-r">{item.currency}</TableCell>
-                                                <TableCell className="text-right border-r">
-                                                    {item.spendCap ? formatCurrency(parseFloat(item.spendCap) / 100, item.currency || 'USD') : '-'}
-                                                </TableCell>
-                                                <TableCell
-                                                    className="text-center cursor-pointer hover:bg-gray-100 transition-colors"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        window.open(`https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${item.id}`, '_blank')
-                                                    }}
-                                                >
-                                                    <div className="flex items-center justify-center">
-                                                        <ExternalLink className="h-4 w-4" />
-                                                    </div>
-                                                </TableCell>
-                                            </>
-                                        )}
-                                        {activeTab !== 'accounts' && (
-                                            <>
-                                                {/* Dynamic cells based on visibleColumns - filter out hardcoded columns */}
-                                                {visibleColumns
-                                                    .filter(colKey => {
-                                                        // These columns are hardcoded and should not be rendered dynamically
-                                                        const hardcodedColumns = ['name']
-                                                        // For ads tab, also exclude account, page, and targeting
-                                                        if (activeTab === 'ads') {
-                                                            return !['name', 'accountName', 'pageName', 'targeting'].includes(colKey)
-                                                        }
-                                                        return !hardcodedColumns.includes(colKey)
-                                                    })
-                                                    .map((colKey, colIndex, filteredArray) =>
-                                                        renderDynamicCell(item, colKey, colIndex, colIndex === filteredArray.length - 1)
-                                                    )}
-                                            </>
-                                        )}
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </table>
+                                                    </TableCell>
+                                                    <TableCell className="border-r text-center">
+                                                        <span className="text-sm font-medium">{item.activeAdsCount || 0}</span>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className="text-right border-r cursor-pointer hover:bg-gray-50"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            openSpendingLimitDialog(item, 'change')
+                                                        }}
+                                                    >
+                                                        {item.spendCap && parseFloat(item.spendCap) > 0 ? (
+                                                            <div className="group relative flex items-center justify-end gap-2">
+                                                                {/* Edit icon - shows on hover */}
+                                                                <Pencil className="h-3.5 w-3.5 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                                                {/* Progress bar */}
+                                                                <div className="flex items-center gap-2 min-w-[80px]">
+                                                                    {(() => {
+                                                                        const spent = parseFloat(item.amountSpent || '0') / 100
+                                                                        const cap = parseFloat(item.spendCap) / 100
+                                                                        const percentage = cap > 0 ? Math.min(100, Math.round((spent / cap) * 100)) : 0
+                                                                        const progressColor = percentage >= 90 ? 'bg-red-500' : percentage >= 70 ? 'bg-orange-400' : 'bg-emerald-500'
+
+                                                                        return (
+                                                                            <>
+                                                                                <div className="relative w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                                                                    <div
+                                                                                        className={`absolute left-0 top-0 h-full ${progressColor} rounded-full transition-all`}
+                                                                                        style={{ width: `${percentage}%` }}
+                                                                                    />
+                                                                                </div>
+                                                                                <span className="text-sm text-gray-600 w-10 text-right">{percentage}%</span>
+                                                                            </>
+                                                                        )
+                                                                    })()}
+                                                                </div>
+
+                                                                {/* Tooltip with amount */}
+                                                                <div className="absolute top-full right-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                                                    <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                                                                        {formatCurrency(parseFloat(item.amountSpent || '0') / 100, item.currency || 'USD')} / {formatCurrency(parseFloat(item.spendCap) / 100, item.currency || 'USD')}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center justify-end gap-1 text-blue-600 hover:text-blue-700 text-sm">
+                                                                Set Limit
+                                                                <PlusCircle className="h-4 w-4" />
+                                                            </div>
+                                                        )}
+                                                    </TableCell>
+                                                    <TableCell className="text-left border-r">
+                                                        <PaymentMethodCell value={item.paymentMethod} />
+                                                    </TableCell>
+                                                    <TableCell className="text-right border-r">{item.timezone}</TableCell>
+                                                    <TableCell className="text-right border-r">{item.country}</TableCell>
+                                                    <TableCell className="text-right border-r">{item.currency}</TableCell>
+                                                    <TableCell className="text-right border-r">
+                                                        {item.spendCap ? formatCurrency(parseFloat(item.spendCap) / 100, item.currency || 'USD') : '-'}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        className="text-center cursor-pointer hover:bg-gray-100 transition-colors"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            window.open(`https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=${item.id}`, '_blank')
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center justify-center">
+                                                            <ExternalLink className="h-4 w-4" />
+                                                        </div>
+                                                    </TableCell>
+                                                </>
+                                            )}
+                                            {activeTab !== 'accounts' && (
+                                                <>
+                                                    {/* Dynamic cells based on visibleColumns - filter out hardcoded columns */}
+                                                    {visibleColumns
+                                                        .filter(colKey => {
+                                                            // These columns are hardcoded and should not be rendered dynamically
+                                                            const hardcodedColumns = ['name']
+                                                            // For ads tab, also exclude account, page, and targeting
+                                                            if (activeTab === 'ads') {
+                                                                return !['name', 'accountName', 'pageName', 'targeting'].includes(colKey)
+                                                            }
+                                                            return !hardcodedColumns.includes(colKey)
+                                                        })
+                                                        .map((colKey, colIndex, filteredArray) =>
+                                                            renderDynamicCell(item, colKey, colIndex, colIndex === filteredArray.length - 1)
+                                                        )}
+                                                </>
+                                            )}
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
             {currentSelection.length > 0 && (
                 <div className="text-sm text-muted-foreground flex-none">
                     {currentSelection.length} {t.common.selected}
@@ -2351,6 +2357,6 @@ export default function AdsTable() {
                 formattingRules={formattingRules}
                 setFormattingRules={setFormattingRules}
             />
-        </div >
+        </div>
     )
 }
