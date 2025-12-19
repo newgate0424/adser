@@ -507,7 +507,7 @@ export default function DashboardV2Page() {
                         <div className="mx-6 mt-4 p-4 bg-white dark:bg-zinc-800 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-700">
 
                             {/* 1. Top Navigation Bar (Filters & Tabs) */}
-                            <div className="flex flex-col gap-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
                                 {/* Tabs Pilled */}
                                 <div className="flex p-1 bg-gray-100 dark:bg-zinc-800 rounded-lg overflow-x-auto">
                                     {tabs.map(tab => (
