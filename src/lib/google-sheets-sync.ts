@@ -1,4 +1,6 @@
 import { google } from 'googleapis';
+import fs from 'fs';
+import path from 'path';
 
 // รายชื่อชีตที่ต้องซิงค์
 export const SHEET_NAMES = [
@@ -14,19 +16,43 @@ export const SHEET_NAMES = [
 // ฟังก์ชันสำหรับการเชื่อมต่อกับ Google Sheets
 export async function getGoogleSheetsClient() {
     try {
-        const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+        let clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
         let privateKey = process.env.GOOGLE_PRIVATE_KEY;
         const sheetId = process.env.GOOGLE_SHEET_ID;
 
+        // Try to read from credentials.json if it exists
+        const credentialsPath = path.join(process.cwd(), 'credentials.json');
+        if (fs.existsSync(credentialsPath)) {
+            try {
+                const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+                if (credentials.client_email) clientEmail = credentials.client_email;
+                if (credentials.private_key) privateKey = credentials.private_key;
+            } catch (e) {
+                console.warn('Error reading credentials.json:', e);
+            }
+        }
+
         if (!clientEmail || !privateKey || !sheetId) {
-            throw new Error('Missing Google Sheets credentials in environment variables. Required: GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SHEET_ID');
+            throw new Error('Missing Google Sheets credentials. Required: GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY (or credentials.json), and GOOGLE_SHEET_ID');
         }
 
         // Handle different private key formats
-        // Replace literal \n with actual newlines
+        // 1. Check if it's a file path (if not already loaded from credentials.json)
+        if (privateKey && privateKey.length < 1024 && !privateKey.includes('-----BEGIN')) {
+            try {
+                const potentialPath = path.isAbsolute(privateKey) ? privateKey : path.join(process.cwd(), privateKey);
+                if (fs.existsSync(potentialPath) && fs.lstatSync(potentialPath).isFile()) {
+                    privateKey = fs.readFileSync(potentialPath, 'utf8');
+                }
+            } catch (e) {
+                // Not a path or error reading, continue with original value
+            }
+        }
+
+        // 2. Replace literal \n with actual newlines
         privateKey = privateKey.replace(/\\n/g, '\n');
 
-        // If the key doesn't start with -----, try to decode as base64
+        // 3. If the key doesn't start with -----, try to decode as base64
         if (!privateKey.startsWith('-----')) {
             try {
                 privateKey = Buffer.from(privateKey, 'base64').toString('utf-8');
