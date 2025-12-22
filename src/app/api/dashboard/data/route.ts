@@ -87,7 +87,59 @@ export async function GET(request: NextRequest) {
         // Remove duplicates and aggregate based on view type
         let aggregated: Map<string, AggregatedData & { dayCount: number }>
 
-        if (view === 'adser') {
+        if (view === 'all') {
+            // For all view: aggregate everything into one row
+            aggregated = new Map<string, AggregatedData & { dayCount: number }>()
+            const key = 'รวม'
+
+            for (const row of rawData) {
+                if (!aggregated.has(key)) {
+                    aggregated.set(key, {
+                        team: key,
+                        date: startDate,
+                        message: 0,
+                        planMessage: 0,
+                        spend: 0,
+                        planSpend: 0,
+                        netMessages: 0,
+                        lostMessages: 0,
+                        deposit: 0,
+                        turnover: 0,
+                        turnoverAdser: 0,
+                        silent: 0,
+                        duplicate: 0,
+                        hasUser: 0,
+                        spam: 0,
+                        blocked: 0,
+                        under18: 0,
+                        over50: 0,
+                        foreign: 0,
+                        dayCount: 0
+                    })
+                }
+
+                const current = aggregated.get(key)!
+
+                current.message += row.message
+                current.planMessage += row.planMessage
+                current.spend += row.spend
+                current.planSpend += row.planSpend
+                current.netMessages += row.netMessages
+                current.lostMessages += row.lostMessages
+                current.deposit += row.deposit
+                current.turnover += row.turnover
+                current.turnoverAdser += row.turnoverAdser
+                current.silent += row.silent
+                current.duplicate += row.duplicate
+                current.hasUser += row.hasUser
+                current.spam += row.spam
+                current.blocked += row.blocked
+                current.under18 += row.under18
+                current.over50 += row.over50
+                current.foreign += row.foreign
+                current.dayCount += 1
+            }
+        } else if (view === 'adser') {
             // For adser view: aggregate by adser across all dates in the range
             aggregated = new Map<string, AggregatedData & { dayCount: number }>()
 

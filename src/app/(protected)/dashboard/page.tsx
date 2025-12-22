@@ -533,6 +533,7 @@ export default function DashboardV2Page() {
                                     <Select value={selectedView} onValueChange={handleViewChange}>
                                         <SelectTrigger className="w-full sm:w-[120px] h-10"><SelectValue /></SelectTrigger>
                                         <SelectContent>
+                                            <SelectItem value="all">รวม</SelectItem>
                                             <SelectItem value="team">ทีม</SelectItem>
                                             <SelectItem value="adser">แอดเซอร์</SelectItem>
                                         </SelectContent>

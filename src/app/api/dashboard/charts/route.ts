@@ -123,11 +123,6 @@ export async function GET(request: NextRequest) {
             // Get date string for comparison (YYYY-MM-DD)
             const intervalDateStr = format(interval, 'yyyy-MM-dd')
 
-            const periodData: Record<string, any> = {
-                period: periodLabel,
-                date: intervalDateStr
-            }
-
             // กรองข้อมูลสำหรับช่วงเวลานี้ using date string comparison
             const periodRecords = allData.filter((record: any) => {
                 // Convert record date to local date string
@@ -143,7 +138,62 @@ export async function GET(request: NextRequest) {
                 }
             })
 
-            if (view === 'team') {
+            const periodData: Record<string, any> = {
+                period: periodLabel,
+                date: intervalDateStr,
+                depositAmount: periodRecords.reduce((sum: number, item: any) => sum + (item.deposit || 0), 0)
+            }
+
+            if (view === 'all') {
+                // aggregate ทั้งหมด
+                const daySpend = periodRecords.reduce((sum: number, item: any) => sum + (item.spend || 0), 0)
+                const dayDeposit = periodRecords.reduce((sum: number, item: any) => sum + (item.deposit || 0), 0)
+                const dayMessage = periodRecords.reduce((sum: number, item: any) => sum + (item.message || 0), 0)
+                const dayTurnoverAdser = periodRecords.reduce((sum: number, item: any) => sum + (item.turnoverAdser || 0), 0)
+
+                const key = 'รวม'
+
+                if (period === 'daily') {
+                    if (!cumulativeByTeam['all']) {
+                        cumulativeByTeam['all'] = { spend: 0, deposit: 0, message: 0, turnoverAdser: 0 }
+                    }
+                    cumulativeByTeam['all'].spend += daySpend
+                    cumulativeByTeam['all'].deposit += dayDeposit
+                    cumulativeByTeam['all'].message += dayMessage
+                    cumulativeByTeam['all'].turnoverAdser += dayTurnoverAdser
+
+                    const totalSpend = cumulativeByTeam['all'].spend
+                    const totalTurnoverAdser = cumulativeByTeam['all'].turnoverAdser
+
+                    const dollarPerCover = totalSpend > 0 && exchangeRate > 0
+                        ? (totalTurnoverAdser / exchangeRate) / totalSpend
+                        : 0
+
+                    periodData[key] = {
+                        cpm: dayMessage > 0 ? parseFloat((daySpend / dayMessage).toFixed(2)) : 0,
+                        costPerDeposit: dayDeposit > 0 ? parseFloat((daySpend / dayDeposit).toFixed(2)) : 0,
+                        depositAmount: dayDeposit,
+                        dollarPerCover: parseFloat(dollarPerCover.toFixed(4)),
+                        spend: daySpend,
+                        deposit: dayDeposit,
+                        turnoverAdser: dayTurnoverAdser
+                    }
+                } else {
+                    const dollarPerCover = daySpend > 0 && exchangeRate > 0
+                        ? (dayTurnoverAdser / exchangeRate) / daySpend
+                        : 0
+
+                    periodData[key] = {
+                        cpm: dayMessage > 0 ? parseFloat((daySpend / dayMessage).toFixed(2)) : 0,
+                        costPerDeposit: dayDeposit > 0 ? parseFloat((daySpend / dayDeposit).toFixed(2)) : 0,
+                        depositAmount: dayDeposit,
+                        dollarPerCover: parseFloat(dollarPerCover.toFixed(4)),
+                        spend: daySpend,
+                        deposit: dayDeposit,
+                        turnoverAdser: dayTurnoverAdser
+                    }
+                }
+            } else if (view === 'team') {
                 // aggregate ตามทีม
                 for (const team of teams) {
                     const teamRecords = periodRecords.filter((r: any) => r.team === team)
